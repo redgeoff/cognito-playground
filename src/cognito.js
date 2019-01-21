@@ -1,6 +1,8 @@
 import {
   CognitoUserPool,
-  CognitoUserAttribute /*, CognitoUser */
+  CognitoUserAttribute,
+  CognitoUser,
+  AuthenticationDetails
 } from 'amazon-cognito-identity-js';
 
 export default class Cognito {
@@ -49,5 +51,34 @@ export default class Cognito {
     }
 
     return this._signUp(username, password, attributeList);
+  }
+
+  async _authenticateUser(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      return cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: result => {
+          resolve(result);
+        },
+        onFailure: function(err) {
+          reject(err);
+        }
+      });
+    });
+  }
+
+  async authenticateUser(username, password) {
+    const userData = {
+      Username: username,
+      Pool: this._userPool
+    };
+    const cognitoUser = new CognitoUser(userData);
+
+    const authenticationData = {
+      Username: username,
+      Password: password
+    };
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+
+    return this._authenticateUser(cognitoUser, authenticationDetails);
   }
 }
