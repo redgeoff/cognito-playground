@@ -66,12 +66,16 @@ export default class Cognito {
     });
   }
 
-  async authenticateUser(username, password) {
+  cognitoUser(username) {
     const userData = {
       Username: username,
       Pool: this._userPool
     };
-    const cognitoUser = new CognitoUser(userData);
+    return new CognitoUser(userData);
+  }
+
+  async authenticateUser(username, password) {
+    const cognitoUser = this.cognitoUser(username);
 
     const authenticationData = {
       Username: username,
@@ -79,6 +83,30 @@ export default class Cognito {
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
 
-    return this._authenticateUser(cognitoUser, authenticationDetails);
+    const response = await this._authenticateUser(
+      cognitoUser,
+      authenticationDetails
+    );
+    // console.log(await this.getUserData(cognitoUser));
+    // console.log({ groups: response.accessToken.payload['cognito:groups'] })
+    console.log({
+      groups:
+        cognitoUser.signInUserSession.accessToken.payload['cognito:groups']
+    });
+    console.log(response);
+    // console.log(cognitoUser);
+    return response;
+  }
+
+  getUserData(cognitoUser) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.getUserData((err, userData) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(userData);
+        }
+      });
+    });
   }
 }

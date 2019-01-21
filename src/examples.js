@@ -22,3 +22,9 @@ export const authenticateUser = async () => {
   const response = await cognito.authenticateUser(username, password);
   console.log(response);
 };
+
+export const getUserData = async () => {
+  const cognitoUser = cognito.cognitoUser(username);
+  const response = cognito.getUserData(cognitoUser);
+  console.log(response);
+};
