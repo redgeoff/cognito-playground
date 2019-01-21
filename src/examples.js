@@ -6,6 +6,8 @@ const cognito = new Cognito(poolData);
 
 const email = 'test2@example.com';
 const password = 'Secret123!';
+// const username = email;
+const username = '2f918bd6-b63d-4738-8fc3-355f61069896';
 
 export const signUp = async () => {
   const response = await cognito.signUp(email, password, {
@@ -16,6 +18,7 @@ export const signUp = async () => {
 };
 
 export const authenticateUser = async () => {
-  const response = await cognito.authenticateUser(email, password);
+  // Note: you can log in with the email or UUID as the username
+  const response = await cognito.authenticateUser(username, password);
   console.log(response);
 };
