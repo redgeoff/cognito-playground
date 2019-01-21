@@ -12,8 +12,8 @@ export default class Cognito {
   async _signUp(username, password, attributeList) {
     return new Promise((resolve, reject) => {
       this._userPool.signUp(
-        'username',
-        'password',
+        username,
+        password,
         attributeList,
         null,
         (err, result) => {
