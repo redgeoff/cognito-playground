@@ -6,7 +6,8 @@ var poolData = config.poolData;
 export const signUp = async () => {
   const cognito = new Cognito(poolData);
   const email = 'test1@example.com';
-  const response = await cognito.signUp(email, 'secret', {
+  const password = 'Secret123!';
+  const response = await cognito.signUp(email, password, {
     email,
     phoneNumber: '+12061111111'
   });
