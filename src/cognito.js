@@ -4,6 +4,10 @@ import {
   CognitoUser,
   AuthenticationDetails
 } from 'amazon-cognito-identity-js';
+import fetch from 'node-fetch';
+import config from './config';
+
+const API_URL = `https://cognito-idp.${config.region}.amazonaws.com`;
 
 export default class Cognito {
   constructor(poolData) {
@@ -11,7 +15,7 @@ export default class Cognito {
     this._userPool = new CognitoUserPool(this._poolData);
   }
 
-  async _signUp(username, password, attributeList) {
+  async signUpPromise(username, password, attributeList) {
     return new Promise((resolve, reject) => {
       this._userPool.signUp(
         username,
@@ -50,10 +54,20 @@ export default class Cognito {
       attributeList.push(attributePhoneNumber);
     }
 
-    return this._signUp(username, password, attributeList);
+    if (attributes.apiSecret !== undefined) {
+      const apiSecret = {
+        Name: 'custom:apiSecret',
+        Value: attributes.apiSecret
+      };
+      const attributeAPISecret = new CognitoUserAttribute(apiSecret);
+      attributeList.push(attributeAPISecret);
+    }
+
+    // Note: will need to use getAttributeVerificationCode to verify user when creating API user
+    return this.signUpPromise(username, password, attributeList);
   }
 
-  async _authenticateUser(cognitoUser, authenticationDetails) {
+  async authenticateUserPromise(cognitoUser, authenticationDetails) {
     return new Promise((resolve, reject) => {
       return cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: result => {
@@ -83,11 +97,11 @@ export default class Cognito {
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
 
-    const response = await this._authenticateUser(
+    const response = await this.authenticateUserPromise(
       cognitoUser,
       authenticationDetails
     );
-    // console.log(await this.getUserData(cognitoUser));
+    console.log({ userData: await this.getUserData(cognitoUser) });
     // console.log({ groups: response.accessToken.payload['cognito:groups'] })
     console.log({
       groups:
@@ -95,7 +109,57 @@ export default class Cognito {
     });
     console.log(response);
     // console.log(cognitoUser);
+
+    // console.log('signing out')
+    // await this.globalSignOutPromise(cognitoUser);
+
     return response;
+  }
+
+  async initiateAuthPromise(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      return cognitoUser.initiateAuth(authenticationDetails, {
+        onSuccess: result => {
+          resolve(result);
+        },
+        onFailure: function(err) {
+          reject(err);
+        },
+        customChallenge: function(challengeParameters) {
+          console.log({ challengeParameters });
+          // // User authentication depends on challenge response
+          // var challengeResponses = 'challenge-answer'
+          // cognitoUser.sendCustomChallengeAnswer(challengeResponses, this);
+        }
+      });
+    });
+  }
+
+  // Note: probably need lambda for this, yup:
+  // https://aws.amazon.com/blogs/mobile/customizing-your-user-pool-authentication-flow/
+  async authenticateUserWithoutPassword(username) {
+    const cognitoUser = this.cognitoUser(username);
+
+    cognitoUser.setAuthenticationFlowType('CUSTOM_AUTH');
+
+    const authenticationData = {
+      Username: username
+    };
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+
+    return this.initiateAuthPromise(cognitoUser, authenticationDetails);
+  }
+
+  globalSignOutPromise(cognitoUser) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.globalSignOut((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
   }
 
   getUserData(cognitoUser) {
@@ -108,5 +172,24 @@ export default class Cognito {
         }
       });
     });
+  }
+
+  // Note: there doesn't appear to be a way to use aws-amplify to sign out with just a token, so
+  // we'll default to using the RESTful API directly. Also, there doesn't appear to be a way to
+  // revoke a single token, just all the tokens for a user.
+  async globalSignOut(token) {
+    const headers = {
+      'X-Amz-Target': 'AWSCognitoIdentityProviderService.GlobalSignOut',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-User-Agent': 'aws-amplify/0.1.x js'
+    };
+
+    const body = { AccessToken: token };
+    return fetch(API_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    }).then(res => res.json());
   }
 }

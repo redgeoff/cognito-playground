@@ -40,6 +40,20 @@ x-amzn-requestid: 1c68d67a-1da6-11e9-b3d2-ad17606f89a5
 
 
 
+status: 400
+x-amzn-errormessage: A client attempted to write unauthorized attribute
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 59273fc4-1df8-11e9-bc1d-c97b4a31d156
+{"__type":"NotAuthorizedException","message":"A client attempted to write unauthorized attribute"}
+
+
+status: 400
+x-amzn-errormessage: Password did not conform with policy: Password must have uppercase characters
+x-amzn-errortype: InvalidPasswordException:
+x-amzn-requestid: 420855eb-1dfb-11e9-b96b-ef86fa655126
+{"__type":"InvalidPasswordException","message":"Password did not conform with policy: Password must have uppercase characters"}
+
+
 # AUTHENTICATE USER
 
 status: 200
@@ -87,3 +101,23 @@ x-amzn-errormessage: User is not confirmed.
 x-amzn-errortype: UserNotConfirmedException:
 x-amzn-requestid: 24d8b8ff-1dc0-11e9-a041-51f65c9b19a0
 {"__type":"UserNotConfirmedException","message":"User is not confirmed."}
+
+
+
+# Global Sign out
+
+status: 200
+x-amzn-requestid: 99d75769-1dea-11e9-bc1d-c97b4a31d156
+{}
+
+status: 400
+x-amzn-errormessage: Access Token has been revoked
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 539e0ba9-1dea-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Access Token has been revoked"}
+
+# Get User Data
+
+status: 200
+x-amzn-requestid: 188d6576-1dfa-11e9-b855-bd6a9d280b8f
+{"UserAttributes":[{"Name":"sub","Value":"1932694d-0e99-48fd-835d-05fb69eb937a"},{"Name":"email_verified","Value":"false"},{"Name":"phone_number_verified","Value":"false"},{"Name":"phone_number","Value":"+12061111112"},{"Name":"custom:apiSecret","Value":"my-api-secret"},{"Name":"email","Value":"test4@example.com"}],"Username":"1932694d-0e99-48fd-835d-05fb69eb937a"}
