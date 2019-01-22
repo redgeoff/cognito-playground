@@ -103,6 +103,19 @@ x-amzn-requestid: 24d8b8ff-1dc0-11e9-a041-51f65c9b19a0
 {"__type":"UserNotConfirmedException","message":"User is not confirmed."}
 
 
+status: 400
+x-amzn-errormessage: Incorrect username or password.
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 733a98c3-1e69-11e9-bc1d-c97b4a31d156
+{"__type":"NotAuthorizedException","message":"Incorrect username or password."}
+
+
+status: 400
+x-amzn-errormessage: User does not exist.
+x-amzn-errortype: UserNotFoundException:
+x-amzn-requestid: ddd45491-1e69-11e9-9a61-611fead63397
+{"__type":"UserNotFoundException","message":"User does not exist."}
+
 
 # Global Sign out
 
