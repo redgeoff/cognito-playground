@@ -15,7 +15,7 @@ export default class Cognito {
     this._userPool = new CognitoUserPool(this._poolData);
   }
 
-  async _signUp(username, password, attributeList) {
+  async signUpPromise(username, password, attributeList) {
     return new Promise((resolve, reject) => {
       this._userPool.signUp(
         username,
@@ -54,10 +54,10 @@ export default class Cognito {
       attributeList.push(attributePhoneNumber);
     }
 
-    return this._signUp(username, password, attributeList);
+    return this.signUpPromise(username, password, attributeList);
   }
 
-  async _authenticateUser(cognitoUser, authenticationDetails) {
+  async authenticateUserPromise(cognitoUser, authenticationDetails) {
     return new Promise((resolve, reject) => {
       return cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: result => {
@@ -87,7 +87,7 @@ export default class Cognito {
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
 
-    const response = await this._authenticateUser(
+    const response = await this.authenticateUserPromise(
       cognitoUser,
       authenticationDetails
     );
@@ -104,6 +104,33 @@ export default class Cognito {
     // await this.globalSignOutPromise(cognitoUser);
 
     return response;
+  }
+
+  async initiateAuthPromise(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      return cognitoUser.initiateAuth(authenticationDetails, {
+        onSuccess: result => {
+          resolve(result);
+        },
+        onFailure: function(err) {
+          reject(err);
+        }
+      });
+    });
+  }
+
+  // Note: probably need lambda for this
+  async authenticateUserWithoutPassword(username) {
+    const cognitoUser = this.cognitoUser(username);
+
+    cognitoUser.setAuthenticationFlowType('CUSTOM_AUTH');
+
+    const authenticationData = {
+      Username: username
+    };
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+
+    return this.initiateAuthPromise(cognitoUser, authenticationDetails);
   }
 
   globalSignOutPromise(cognitoUser) {

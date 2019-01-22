@@ -3,7 +3,8 @@ import {
   signUp,
   authenticateUser,
   getUserData,
-  globalSignOut
+  globalSignOut,
+  authenticateUserWithoutPassword
 } from './examples';
 
 class App extends Component {
@@ -23,6 +24,10 @@ class App extends Component {
     return globalSignOut();
   }
 
+  authenticateUserWithoutPassword() {
+    return authenticateUserWithoutPassword();
+  }
+
   render() {
     return (
       <div className="App">
@@ -30,6 +35,9 @@ class App extends Component {
         <button onClick={this.authenticateUser}>Authenticate User</button>
         <button onClick={this.getUserData}>Get User Data</button>
         <button onClick={this.globalSignOut}>Global Sign Out</button>
+        <button onClick={this.authenticateUserWithoutPassword}>
+          Authenticate User Without Password
+        </button>
       </div>
     );
   }
