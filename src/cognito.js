@@ -119,7 +119,8 @@ export default class Cognito {
     });
   }
 
-  // Note: probably need lambda for this
+  // Note: probably need lambda for this, yup:
+  // https://aws.amazon.com/blogs/mobile/customizing-your-user-pool-authentication-flow/
   async authenticateUserWithoutPassword(username) {
     const cognitoUser = this.cognitoUser(username);
 
