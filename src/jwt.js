@@ -65,6 +65,11 @@ export const verify = async token => {
     throw 'token has expired';
   }
 
+  // Verify the ClientId
+  if (decodedJwt.payload.client_id !== config.poolData.ClientId) {
+    throw 'invalid client_id';
+  }
+
   // Fail if token is not from your User Pool
   const iss = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`;
   if (decodedJwt.payload.iss != iss) {
