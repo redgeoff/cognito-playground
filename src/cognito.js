@@ -54,6 +54,15 @@ export default class Cognito {
       attributeList.push(attributePhoneNumber);
     }
 
+    if (attributes.apiSecret !== undefined) {
+      const apiSecret = {
+        Name: 'custom:apiSecret',
+        Value: attributes.apiSecret
+      };
+      const attributeAPISecret = new CognitoUserAttribute(apiSecret);
+      attributeList.push(attributeAPISecret);
+    }
+
     // Note: will need to use getAttributeVerificationCode to verify user when creating API user
     return this.signUpPromise(username, password, attributeList);
   }
@@ -92,7 +101,7 @@ export default class Cognito {
       cognitoUser,
       authenticationDetails
     );
-    // console.log(await this.getUserData(cognitoUser));
+    console.log({ userData: await this.getUserData(cognitoUser) });
     // console.log({ groups: response.accessToken.payload['cognito:groups'] })
     console.log({
       groups:
