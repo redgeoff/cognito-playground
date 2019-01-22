@@ -4,6 +4,10 @@ import {
   CognitoUser,
   AuthenticationDetails
 } from 'amazon-cognito-identity-js';
+import fetch from 'node-fetch';
+import config from './config';
+
+const API_URL = `https://cognito-idp.${config.region}.amazonaws.com`;
 
 export default class Cognito {
   constructor(poolData) {
@@ -95,7 +99,23 @@ export default class Cognito {
     });
     console.log(response);
     // console.log(cognitoUser);
+
+    // console.log('signing out')
+    // await this.globalSignOutPromise(cognitoUser);
+
     return response;
+  }
+
+  globalSignOutPromise(cognitoUser) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.globalSignOut((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
   }
 
   getUserData(cognitoUser) {
@@ -108,5 +128,24 @@ export default class Cognito {
         }
       });
     });
+  }
+
+  // Note: there doesn't appear to be a way to use aws-amplify to sign out with just a token, so
+  // we'll default to using the RESTful API directly. Also, there doesn't appear to be a way to
+  // revoke a single token, just all the tokens for a user.
+  async globalSignOut(token) {
+    const headers = {
+      'X-Amz-Target': 'AWSCognitoIdentityProviderService.GlobalSignOut',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-User-Agent': 'aws-amplify/0.1.x js'
+    };
+
+    const body = { AccessToken: token };
+    return fetch(API_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    }).then(res => res.json());
   }
 }

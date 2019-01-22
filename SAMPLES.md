@@ -87,3 +87,17 @@ x-amzn-errormessage: User is not confirmed.
 x-amzn-errortype: UserNotConfirmedException:
 x-amzn-requestid: 24d8b8ff-1dc0-11e9-a041-51f65c9b19a0
 {"__type":"UserNotConfirmedException","message":"User is not confirmed."}
+
+
+
+# Global Sign out
+
+status: 200
+x-amzn-requestid: 99d75769-1dea-11e9-bc1d-c97b4a31d156
+{}
+
+status: 400
+x-amzn-errormessage: Access Token has been revoked
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 539e0ba9-1dea-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Access Token has been revoked"}
