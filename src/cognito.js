@@ -124,6 +124,12 @@ export default class Cognito {
         },
         onFailure: function(err) {
           reject(err);
+        },
+        customChallenge: function(challengeParameters) {
+          console.log({ challengeParameters });
+          // // User authentication depends on challenge response
+          // var challengeResponses = 'challenge-answer'
+          // cognitoUser.sendCustomChallengeAnswer(challengeResponses, this);
         }
       });
     });

@@ -1,6 +1,6 @@
 import Cognito from './cognito';
 import config from './config';
-import uuid from 'uuid';
+// import uuid from 'uuid';
 
 const poolData = config.poolData;
 const cognito = new Cognito(poolData);
