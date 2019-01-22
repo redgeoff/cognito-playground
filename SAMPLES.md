@@ -129,6 +129,21 @@ x-amzn-errortype: NotAuthorizedException:
 x-amzn-requestid: 539e0ba9-1dea-11e9-975d-43cfa037e426
 {"__type":"NotAuthorizedException","message":"Access Token has been revoked"}
 
+
+status: 400
+x-amzn-errormessage: Access Token has expired
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 855e3108-1e6a-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Access Token has expired"}
+
+
+status: 400
+x-amzn-errormessage: Invalid Access Token
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: a81b5141-1e6a-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Invalid Access Token"}
+
+
 # Get User Data
 
 status: 200
