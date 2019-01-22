@@ -9,7 +9,9 @@ const email = 'test5@example.com';
 
 // const password = 'Secret123!';
 // const password = uuid.v4();
-// Note: if don't require uppercase, uuid can be used for password
+
+// Note: if don't require uppercase, uuid can be used for password. Would probably want to create a
+// script that sets password and custom:apiSecret.
 const password = 'c6231092-af98-4205-99c6-3b44d15b5c7f';
 
 // const username = email;
