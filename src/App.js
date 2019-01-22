@@ -4,7 +4,8 @@ import {
   authenticateUser,
   getUserData,
   globalSignOut,
-  authenticateUserWithoutPassword
+  authenticateUserWithoutPassword,
+  refreshSession
 } from './examples';
 
 class App extends Component {
@@ -28,6 +29,10 @@ class App extends Component {
     return authenticateUserWithoutPassword();
   }
 
+  refreshSession() {
+    return refreshSession();
+  }
+
   render() {
     return (
       <div className="App">
@@ -38,6 +43,7 @@ class App extends Component {
         <button onClick={this.authenticateUserWithoutPassword}>
           Authenticate User Without Password
         </button>
+        <button onClick={this.refreshSession}>Refresh Session</button>
       </div>
     );
   }
