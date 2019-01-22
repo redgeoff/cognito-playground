@@ -54,6 +54,7 @@ export default class Cognito {
       attributeList.push(attributePhoneNumber);
     }
 
+    // Note: will need to use getAttributeVerificationCode to verify user when creating API user
     return this.signUpPromise(username, password, attributeList);
   }
 
