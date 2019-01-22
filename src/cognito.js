@@ -2,8 +2,10 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
   CognitoUser,
-  AuthenticationDetails
+  AuthenticationDetails,
+  CognitoRefreshToken
 } from 'amazon-cognito-identity-js';
+// import * as AWS from 'aws-sdk/global';
 import fetch from 'node-fetch';
 import config from './config';
 
@@ -88,6 +90,18 @@ export default class Cognito {
     return new CognitoUser(userData);
   }
 
+  async getSessionPromise(cognitoUser) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.getSession((err, session) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(session);
+        }
+      });
+    });
+  }
+
   async authenticateUser(username, password) {
     const cognitoUser = this.cognitoUser(username);
 
@@ -109,6 +123,14 @@ export default class Cognito {
     });
     console.log(response);
     // console.log(cognitoUser);
+
+    // const session = await this.getSessionPromise(cognitoUser);
+    // const refreshToken = session.getRefreshToken();
+
+    // const refreshToken = response.refreshToken.token;
+    // console.log({ refreshToken })
+    // const refreshResponse = await this.refreshSession(cognitoUser, refreshToken)
+    // console.log({ refreshResponse })
 
     // console.log('signing out')
     // await this.globalSignOutPromise(cognitoUser);
@@ -186,6 +208,64 @@ export default class Cognito {
     };
 
     const body = { AccessToken: token };
+    return fetch(API_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    }).then(res => res.json());
+  }
+
+  async refreshSessionPromise(cognitoUser, refreshToken) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.refreshSession(refreshToken, (err, session) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(session);
+        }
+      });
+    });
+  }
+
+  // async credentialsRefreshPromise() {
+  //   return new Promise((resolve, reject) => {
+  //     AWS.config.credentials.refresh((err)=> {
+  //       if (err)  {
+  //         reject(err);
+  //       } else {
+  //         resolve();
+  //       }
+  //     });
+  //   });
+  // }
+
+  async refreshSession(cognitoUser, refreshToken) {
+    // const url = `cognito-idp.${config.region}.amazonaws.com/${config.poolData.UserPoolId}`
+    // AWS.config.credentials.params.Logins[url] = idToken;
+    const cognitoRefreshToken = new CognitoRefreshToken({
+      RefreshToken: refreshToken
+    });
+    return this.refreshSessionPromise(cognitoUser, cognitoRefreshToken);
+  }
+
+  // Note: there doesn't appear to be a way to use aws-amplify to refresh a token with just the
+  // refresh token so we hit the REST API directly.
+  async refreshSessionDirectly(refreshToken) {
+    const headers = {
+      'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
+      Authorization: `Bearer ${refreshToken}`,
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-User-Agent': 'aws-amplify/0.1.x js'
+    };
+
+    const body = {
+      ClientId: config.poolData.ClientId,
+      AuthFlow: 'REFRESH_TOKEN_AUTH',
+      AuthParameters: {
+        REFRESH_TOKEN: refreshToken
+      }
+    };
+
     return fetch(API_URL, {
       method: 'POST',
       headers,
