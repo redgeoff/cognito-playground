@@ -46,6 +46,14 @@ x-amzn-errortype: NotAuthorizedException:
 x-amzn-requestid: 59273fc4-1df8-11e9-bc1d-c97b4a31d156
 {"__type":"NotAuthorizedException","message":"A client attempted to write unauthorized attribute"}
 
+
+status: 400
+x-amzn-errormessage: Password did not conform with policy: Password must have uppercase characters
+x-amzn-errortype: InvalidPasswordException:
+x-amzn-requestid: 420855eb-1dfb-11e9-b96b-ef86fa655126
+{"__type":"InvalidPasswordException","message":"Password did not conform with policy: Password must have uppercase characters"}
+
+
 # AUTHENTICATE USER
 
 status: 200
