@@ -1,5 +1,5 @@
 import { signUp } from './examples';
 
-it('should sign up', async () => {
+it.skip('should sign up', async () => {
   await signUp();
 });
