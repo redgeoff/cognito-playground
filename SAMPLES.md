@@ -103,6 +103,19 @@ x-amzn-requestid: 24d8b8ff-1dc0-11e9-a041-51f65c9b19a0
 {"__type":"UserNotConfirmedException","message":"User is not confirmed."}
 
 
+status: 400
+x-amzn-errormessage: Incorrect username or password.
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 733a98c3-1e69-11e9-bc1d-c97b4a31d156
+{"__type":"NotAuthorizedException","message":"Incorrect username or password."}
+
+
+status: 400
+x-amzn-errormessage: User does not exist.
+x-amzn-errortype: UserNotFoundException:
+x-amzn-requestid: ddd45491-1e69-11e9-9a61-611fead63397
+{"__type":"UserNotFoundException","message":"User does not exist."}
+
 
 # Global Sign out
 
@@ -115,6 +128,21 @@ x-amzn-errormessage: Access Token has been revoked
 x-amzn-errortype: NotAuthorizedException:
 x-amzn-requestid: 539e0ba9-1dea-11e9-975d-43cfa037e426
 {"__type":"NotAuthorizedException","message":"Access Token has been revoked"}
+
+
+status: 400
+x-amzn-errormessage: Access Token has expired
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: 855e3108-1e6a-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Access Token has expired"}
+
+
+status: 400
+x-amzn-errormessage: Invalid Access Token
+x-amzn-errortype: NotAuthorizedException:
+x-amzn-requestid: a81b5141-1e6a-11e9-975d-43cfa037e426
+{"__type":"NotAuthorizedException","message":"Invalid Access Token"}
+
 
 # Get User Data
 
