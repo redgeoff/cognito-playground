@@ -252,7 +252,8 @@ export default class Cognito {
   }
 
   // Note: there doesn't appear to be a way to use aws-amplify to refresh a token with just the
-  // refresh token so we hit the REST API directly.
+  // refresh token so we hit the REST API directly. UPDATE: you may be able to use
+  // https://stackoverflow.com/a/46407543/2831606
   async refreshSessionDirectly(refreshToken) {
     const headers = {
       'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
