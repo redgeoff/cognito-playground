@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  signUp,
+  signUpWithoutEmail,
   authenticateUser,
   getUserData,
   globalSignOut,
@@ -10,7 +10,8 @@ import {
 
 class App extends Component {
   signUp() {
-    return signUp();
+    // return signUp();
+    return signUpWithoutEmail();
   }
 
   authenticateUser() {
