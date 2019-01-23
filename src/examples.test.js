@@ -4,6 +4,6 @@ it.skip('should sign up', async () => {
   await signUp();
 });
 
-it('should sign out', async () => {
+it.skip('should sign out', async () => {
   await globalSignOut();
 });
