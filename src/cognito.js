@@ -1,3 +1,5 @@
+// TODO: deleteUser: See https://stackoverflow.com/a/44664060/2831606
+
 import {
   CognitoUserPool,
   CognitoUserAttribute,
