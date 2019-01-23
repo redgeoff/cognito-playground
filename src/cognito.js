@@ -8,6 +8,7 @@ import {
 // import * as AWS from 'aws-sdk/global';
 import fetch from 'node-fetch';
 import config from './config';
+import generator from 'generate-password';
 
 const API_URL = `https://cognito-idp.${config.region}.amazonaws.com`;
 
@@ -35,34 +36,36 @@ export default class Cognito {
     });
   }
 
+  _addAttribute(name, value, attributeList) {
+    const data = {
+      Name: name,
+      Value: value
+    };
+    const attribute = new CognitoUserAttribute(data);
+    attributeList.push(attribute);
+  }
+
   async signUp(username, password, attributes) {
     const attributeList = [];
 
     if (attributes.email !== undefined) {
-      const dataEmail = {
-        Name: 'email',
-        Value: attributes.email
-      };
-      const attributeEmail = new CognitoUserAttribute(dataEmail);
-      attributeList.push(attributeEmail);
+      this._addAttribute('email', attributes.email, attributeList);
     }
 
     if (attributes.phoneNumber !== undefined) {
-      const dataPhoneNumber = {
-        Name: 'phone_number',
-        Value: attributes.phoneNumber
-      };
-      const attributePhoneNumber = new CognitoUserAttribute(dataPhoneNumber);
-      attributeList.push(attributePhoneNumber);
+      this._addAttribute('phone_number', attributes.phoneNumber, attributeList);
+    }
+
+    if (attributes.name !== undefined) {
+      this._addAttribute('name', attributes.name, attributeList);
     }
 
     if (attributes.apiSecret !== undefined) {
-      const apiSecret = {
-        Name: 'custom:apiSecret',
-        Value: attributes.apiSecret
-      };
-      const attributeAPISecret = new CognitoUserAttribute(apiSecret);
-      attributeList.push(attributeAPISecret);
+      this._addAttribute(
+        'custom:apiSecret',
+        attributes.apiSecret,
+        attributeList
+      );
     }
 
     // Note: will need to use getAttributeVerificationCode to verify user when creating API user
@@ -271,5 +274,15 @@ export default class Cognito {
       headers,
       body: JSON.stringify(body)
     }).then(res => res.json());
+  }
+
+  generateSecret() {
+    return generator.generate({
+      length: 41, // same length as AWS secrets
+      numbers: true,
+      symbols: false,
+      uppercase: true,
+      strict: true
+    });
   }
 }
