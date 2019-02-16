@@ -143,6 +143,25 @@ export default class Cognito {
     return response;
   }
 
+  async authenticateUserNoPasswordPromise(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      return cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: result => {
+          resolve(result);
+        },
+        onFailure: function(err) {
+          reject(err);
+        },
+        customChallenge: function(challengeParameters) {
+          console.log({ challengeParameters });
+          // // User authentication depends on challenge response
+          // var challengeResponses = 'challenge-answer'
+          // cognitoUser.sendCustomChallengeAnswer(challengeResponses, this);
+        }
+      });
+    });
+  }
+
   async initiateAuthPromise(cognitoUser, authenticationDetails) {
     return new Promise((resolve, reject) => {
       return cognitoUser.initiateAuth(authenticationDetails, {
@@ -174,7 +193,11 @@ export default class Cognito {
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
 
-    return this.initiateAuthPromise(cognitoUser, authenticationDetails);
+    // return this.initiateAuthPromise(cognitoUser, authenticationDetails);
+    return this.authenticateUserNoPasswordPromise(
+      cognitoUser,
+      authenticationDetails
+    );
   }
 
   globalSignOutPromise(cognitoUser) {
