@@ -143,16 +143,19 @@ export default class Cognito {
     return response;
   }
 
-  async initiateAuthPromise(cognitoUser, authenticationDetails) {
+  async authenticateUserNoPasswordPromise(cognitoUser, authenticationDetails) {
     return new Promise((resolve, reject) => {
-      return cognitoUser.initiateAuth(authenticationDetails, {
+      return cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: result => {
+          console.log('onSuccess', result);
           resolve(result);
         },
-        onFailure: function(err) {
+        onFailure: err => {
+          console.log('onFailure', err);
           reject(err);
         },
-        customChallenge: function(challengeParameters) {
+        customChallenge: challengeParameters => {
+          console.log('customChallenge');
           console.log({ challengeParameters });
           // // User authentication depends on challenge response
           // var challengeResponses = 'challenge-answer'
@@ -162,7 +165,33 @@ export default class Cognito {
     });
   }
 
-  // Note: probably need lambda for this, yup:
+  async initiateAuthPromise(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      return cognitoUser.initiateAuth(authenticationDetails, {
+        onSuccess: result => {
+          console.log('onSuccess', result);
+          resolve(result);
+        },
+        onFailure: err => {
+          console.log('onFailure', err);
+          reject(err);
+        },
+
+        // Note: customChallenge is not an arrow function as we want to be able to use this in the
+        // sendCustomChallengeAnswer call below
+        customChallenge: function(challengeParameters) {
+          console.log('customChallenge', { challengeParameters });
+          // User authentication depends on challenge response
+          var challengeResponses = 'secret';
+          cognitoUser.sendCustomChallengeAnswer(challengeResponses, this);
+        }
+      });
+    });
+  }
+
+  // Note: you need to set up the lambda triggers in Cognito, i.e. see
+  // define-auth-challenge-lambda.js, create-auth-challenge-lambda.js and
+  // verify-auth-challenge-response-lambda.js
   // https://aws.amazon.com/blogs/mobile/customizing-your-user-pool-authentication-flow/
   async authenticateUserWithoutPassword(username) {
     const cognitoUser = this.cognitoUser(username);
@@ -175,6 +204,10 @@ export default class Cognito {
     const authenticationDetails = new AuthenticationDetails(authenticationData);
 
     return this.initiateAuthPromise(cognitoUser, authenticationDetails);
+    // return this.authenticateUserNoPasswordPromise(
+    //   cognitoUser,
+    //   authenticationDetails
+    // );
   }
 
   globalSignOutPromise(cognitoUser) {
