@@ -189,7 +189,9 @@ export default class Cognito {
     });
   }
 
-  // Note: probably need lambda for this, yup:
+  // Note: you need to set up the lambda triggers in Cognito, i.e. see
+  // define-auth-challenge-lambda.js, create-auth-challenge-lambda.js and
+  // verify-auth-challenge-response-lambda.js
   // https://aws.amazon.com/blogs/mobile/customizing-your-user-pool-authentication-flow/
   async authenticateUserWithoutPassword(username) {
     const cognitoUser = this.cognitoUser(username);
